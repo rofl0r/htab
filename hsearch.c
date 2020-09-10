@@ -23,10 +23,9 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#define _GNU_SOURCE
 #include <stdlib.h>
 #include <string.h>
-#include <search.h>
+#include "hsearch.h"
 
 /*
 open addressing hash table with 2^n table size
