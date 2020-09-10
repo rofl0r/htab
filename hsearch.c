@@ -49,7 +49,7 @@ static size_t keyhash(char *k)
 	return h;
 }
 
-static int resize(size_t nel, struct hsearch_data *htab)
+static int resize(size_t nel, struct htab *htab)
 {
 	size_t newsize;
 	size_t i, j;
@@ -81,7 +81,7 @@ static int resize(size_t nel, struct hsearch_data *htab)
 	return 1;
 }
 
-static struct elem *lookup(char *key, size_t hash, struct hsearch_data *htab)
+static struct elem *lookup(char *key, size_t hash, struct htab *htab)
 {
 	size_t i, j;
 	struct elem *e;
@@ -95,7 +95,7 @@ static struct elem *lookup(char *key, size_t hash, struct hsearch_data *htab)
 	return e;
 }
 
-int htab_create(size_t nel, struct hsearch_data *htab)
+int htab_create(size_t nel, struct htab *htab)
 {
 	int r;
 
@@ -104,12 +104,12 @@ int htab_create(size_t nel, struct hsearch_data *htab)
 	return r;
 }
 
-void htab_destroy(struct hsearch_data *htab)
+void htab_destroy(struct htab *htab)
 {
 	free(htab->elems);
 }
 
-int htab_search(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *htab)
+int htab_search(ENTRY item, ACTION action, ENTRY **retval, struct htab *htab)
 {
 	size_t hash = keyhash(item.key);
 	struct elem *e = lookup(item.key, hash, htab);

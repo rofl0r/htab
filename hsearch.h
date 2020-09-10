@@ -15,14 +15,14 @@ struct elem {
 	size_t hash;
 };
 
-struct hsearch_data {
+struct htab {
 	struct elem *elems;
 	size_t mask;
 	size_t used;
 };
 
-int htab_create(size_t, struct hsearch_data *);
-void htab_hdestroy(struct hsearch_data *);
-int htab_hsearch(ENTRY, ACTION, ENTRY **, struct hsearch_data *);
+int htab_create(size_t, struct htab *);
+void htab_hdestroy(struct htab *);
+int htab_hsearch(ENTRY, ACTION, ENTRY **, struct htab *);
 
 #endif
