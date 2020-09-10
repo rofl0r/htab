@@ -21,7 +21,7 @@ struct htab {
 	size_t used;
 };
 
-int htab_create(struct htab *, size_t);
+struct htab * htab_create(size_t);
 void htab_hdestroy(struct htab *);
 int htab_hsearch(struct htab *, ENTRY, ACTION, ENTRY **);
 

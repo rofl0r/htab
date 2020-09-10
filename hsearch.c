@@ -95,18 +95,20 @@ static struct elem *lookup(struct htab *htab, char *key, size_t hash)
 	return e;
 }
 
-int htab_create(struct htab *htab, size_t nel)
+struct htab *htab_create(size_t nel)
 {
-	int r;
-
-	r = resize(htab, nel);
-
+	struct htab *r = calloc(1, sizeof *r);
+	if(r && !resize(r, nel)) {
+		free(r);
+		r = 0;
+	}
 	return r;
 }
 
 void htab_destroy(struct htab *htab)
 {
 	free(htab->elems);
+	free(htab);
 }
 
 int htab_search(struct htab *htab, ENTRY item, ACTION action, ENTRY **retval)
