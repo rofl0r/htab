@@ -111,13 +111,13 @@ void htab_destroy(struct htab *htab)
 	free(htab);
 }
 
-htab_entry* htab_find(struct htab *htab, char* key)
+htab_value* htab_find(struct htab *htab, char* key)
 {
 	size_t hash = keyhash(key);
 	struct elem *e = lookup(htab, key, hash);
 
 	if (e->item.key) {
-		return &e->item;
+		return &e->item.data;
 	}
 	return 0;
 }

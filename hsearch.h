@@ -5,9 +5,14 @@
 
 typedef enum { FIND, ENTER } ACTION;
 
+typedef union htab_value {
+	void *p;
+	size_t n;
+} htab_value;
+
 typedef struct htab_entry {
 	char *key;
-	void *data;
+	htab_value data;
 } htab_entry;
 
 struct elem {
@@ -23,7 +28,7 @@ struct htab {
 
 struct htab * htab_create(size_t);
 void htab_hdestroy(struct htab *);
-htab_entry* htab_find(struct htab *, char* key);
+htab_value* htab_find(struct htab *, char* key);
 htab_entry* htab_hsearch(struct htab *, htab_entry, ACTION);
 
 #endif
