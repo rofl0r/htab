@@ -14,8 +14,6 @@ ENTRY *hsearch(ENTRY, ACTION);
 
 struct hsearch_data {
 	struct tab *tab;
-	unsigned int __unused1;
-	unsigned int __unused2;
 };
 
 int hcreate_r(size_t, struct hsearch_data *);
