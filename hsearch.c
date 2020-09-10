@@ -111,17 +111,15 @@ void htab_destroy(struct htab *htab)
 	free(htab);
 }
 
-int htab_search(struct htab *htab, ENTRY item, ACTION action, ENTRY **retval)
+ENTRY * htab_search(struct htab *htab, ENTRY item, ACTION action)
 {
 	size_t hash = keyhash(item.key);
 	struct elem *e = lookup(htab, item.key, hash);
 
 	if (e->item.key) {
-		*retval = &e->item;
-		return 1;
+		return &e->item;
 	}
 	if (action == FIND) {
-		*retval = 0;
 		return 0;
 	}
 	e->item = item;
@@ -130,11 +128,9 @@ int htab_search(struct htab *htab, ENTRY item, ACTION action, ENTRY **retval)
 		if (!resize(htab, 2*htab->used)) {
 			htab->used--;
 			e->item.key = 0;
-			*retval = 0;
 			return 0;
 		}
 		e = lookup(htab, item.key, hash);
 	}
-	*retval = &e->item;
-	return 1;
+	return &e->item;
 }
