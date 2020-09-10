@@ -39,12 +39,6 @@ with the posix api items cannot be iterated and length cannot be queried
 #define MINSIZE 8
 #define MAXSIZE ((size_t)-1/2 + 1)
 
-static struct hsearch_data htab;
-
-int hcreate_r(size_t, struct hsearch_data *);
-void hdestroy_r(struct hsearch_data *);
-int hsearch_r(ENTRY, ACTION, ENTRY **, struct hsearch_data *);
-
 static size_t keyhash(char *k)
 {
 	unsigned char *p = (void *)k;
@@ -87,16 +81,6 @@ static int resize(size_t nel, struct hsearch_data *htab)
 	return 1;
 }
 
-int hcreate(size_t nel)
-{
-	return hcreate_r(nel, &htab);
-}
-
-void hdestroy(void)
-{
-	hdestroy_r(&htab);
-}
-
 static struct elem *lookup(char *key, size_t hash, struct hsearch_data *htab)
 {
 	size_t i, j;
@@ -108,14 +92,6 @@ static struct elem *lookup(char *key, size_t hash, struct hsearch_data *htab)
 		    (e->hash==hash && strcmp(e->item.key, key)==0))
 			break;
 	}
-	return e;
-}
-
-ENTRY *hsearch(ENTRY item, ACTION action)
-{
-	ENTRY *e;
-
-	hsearch_r(item, action, &e, &htab);
 	return e;
 }
 

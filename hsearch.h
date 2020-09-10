@@ -21,10 +21,6 @@ struct hsearch_data {
 	size_t used;
 };
 
-int hcreate(size_t);
-void hdestroy(void);
-ENTRY *hsearch(ENTRY, ACTION);
-
 int hcreate_r(size_t, struct hsearch_data *);
 void hdestroy_r(struct hsearch_data *);
 int hsearch_r(ENTRY, ACTION, ENTRY **, struct hsearch_data *);
