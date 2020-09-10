@@ -23,6 +23,7 @@ struct htab {
 
 struct htab * htab_create(size_t);
 void htab_hdestroy(struct htab *);
+htab_entry* htab_find(struct htab *, char* key);
 htab_entry* htab_hsearch(struct htab *, htab_entry, ACTION);
 
 #endif
