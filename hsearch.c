@@ -111,7 +111,7 @@ void htab_destroy(struct htab *htab)
 	free(htab);
 }
 
-ENTRY * htab_search(struct htab *htab, ENTRY item, ACTION action)
+htab_entry * htab_search(struct htab *htab, htab_entry item, ACTION action)
 {
 	size_t hash = keyhash(item.key);
 	struct elem *e = lookup(htab, item.key, hash);

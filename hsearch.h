@@ -5,13 +5,13 @@
 
 typedef enum { FIND, ENTER } ACTION;
 
-typedef struct entry {
+typedef struct htab_entry {
 	char *key;
 	void *data;
-} ENTRY;
+} htab_entry;
 
 struct elem {
-	ENTRY item;
+	htab_entry item;
 	size_t hash;
 };
 
@@ -23,6 +23,6 @@ struct htab {
 
 struct htab * htab_create(size_t);
 void htab_hdestroy(struct htab *);
-ENTRY* htab_hsearch(struct htab *, ENTRY, ACTION);
+htab_entry* htab_hsearch(struct htab *, htab_entry, ACTION);
 
 #endif
