@@ -1,6 +1,8 @@
 #ifndef HSEARCH_H
 #define HSEARCH_H
 
+#include <stdlib.h>
+
 typedef enum { FIND, ENTER } ACTION;
 
 typedef struct entry {
@@ -8,13 +10,20 @@ typedef struct entry {
 	void *data;
 } ENTRY;
 
+struct elem {
+	ENTRY item;
+	size_t hash;
+};
+
+struct hsearch_data {
+	struct elem *elems;
+	size_t mask;
+	size_t used;
+};
+
 int hcreate(size_t);
 void hdestroy(void);
 ENTRY *hsearch(ENTRY, ACTION);
-
-struct hsearch_data {
-	struct tab *tab;
-};
 
 int hcreate_r(size_t, struct hsearch_data *);
 void hdestroy_r(struct hsearch_data *);

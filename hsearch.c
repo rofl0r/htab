@@ -39,17 +39,6 @@ with the posix api items cannot be iterated and length cannot be queried
 #define MINSIZE 8
 #define MAXSIZE ((size_t)-1/2 + 1)
 
-struct elem {
-	ENTRY item;
-	size_t hash;
-};
-
-struct tab {
-	struct elem *elems;
-	size_t mask;
-	size_t used;
-};
-
 static struct hsearch_data htab;
 
 int hcreate_r(size_t, struct hsearch_data *);
@@ -71,24 +60,24 @@ static int resize(size_t nel, struct hsearch_data *htab)
 	size_t newsize;
 	size_t i, j;
 	struct elem *e, *newe;
-	struct elem *oldtab = htab->tab->elems;
-	struct elem *oldend = htab->tab->elems + htab->tab->mask + 1;
+	struct elem *oldtab = htab->elems;
+	struct elem *oldend = htab->elems + htab->mask + 1;
 
 	if (nel > MAXSIZE)
 		nel = MAXSIZE;
 	for (newsize = MINSIZE; newsize < nel; newsize *= 2);
-	htab->tab->elems = calloc(newsize, sizeof *htab->tab->elems);
-	if (!htab->tab->elems) {
-		htab->tab->elems = oldtab;
+	htab->elems = calloc(newsize, sizeof *htab->elems);
+	if (!htab->elems) {
+		htab->elems = oldtab;
 		return 0;
 	}
-	htab->tab->mask = newsize - 1;
+	htab->mask = newsize - 1;
 	if (!oldtab)
 		return 1;
 	for (e = oldtab; e < oldend; e++)
 		if (e->item.key) {
 			for (i=e->hash,j=1; ; i+=j++) {
-				newe = htab->tab->elems + (i & htab->tab->mask);
+				newe = htab->elems + (i & htab->mask);
 				if (!newe->item.key)
 					break;
 			}
@@ -114,7 +103,7 @@ static struct elem *lookup(char *key, size_t hash, struct hsearch_data *htab)
 	struct elem *e;
 
 	for (i=hash,j=1; ; i+=j++) {
-		e = htab->tab->elems + (i & htab->tab->mask);
+		e = htab->elems + (i & htab->mask);
 		if (!e->item.key ||
 		    (e->hash==hash && strcmp(e->item.key, key)==0))
 			break;
@@ -134,22 +123,14 @@ int hcreate_r(size_t nel, struct hsearch_data *htab)
 {
 	int r;
 
-	htab->tab = calloc(1, sizeof *htab->tab);
-	if (!htab->tab)
-		return 0;
 	r = resize(nel, htab);
-	if (r == 0) {
-		free(htab->tab);
-		htab->tab = 0;
-	}
+
 	return r;
 }
 
 void hdestroy_r(struct hsearch_data *htab)
 {
-	if (htab->tab) free(htab->tab->elems);
-	free(htab->tab);
-	htab->tab = 0;
+	free(htab->elems);
 }
 
 int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *htab)
@@ -167,9 +148,9 @@ int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *ht
 	}
 	e->item = item;
 	e->hash = hash;
-	if (++htab->tab->used > htab->tab->mask - htab->tab->mask/4) {
-		if (!resize(2*htab->tab->used, htab)) {
-			htab->tab->used--;
+	if (++htab->used > htab->mask - htab->mask/4) {
+		if (!resize(2*htab->used, htab)) {
+			htab->used--;
 			e->item.key = 0;
 			*retval = 0;
 			return 0;
