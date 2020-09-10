@@ -52,9 +52,9 @@ struct __tab {
 
 static struct hsearch_data htab;
 
-int __hcreate_r(size_t, struct hsearch_data *);
-void __hdestroy_r(struct hsearch_data *);
-int __hsearch_r(ENTRY, ACTION, ENTRY **, struct hsearch_data *);
+int hcreate_r(size_t, struct hsearch_data *);
+void hdestroy_r(struct hsearch_data *);
+int hsearch_r(ENTRY, ACTION, ENTRY **, struct hsearch_data *);
 
 static size_t keyhash(char *k)
 {
@@ -100,12 +100,12 @@ static int resize(size_t nel, struct hsearch_data *htab)
 
 int hcreate(size_t nel)
 {
-	return __hcreate_r(nel, &htab);
+	return hcreate_r(nel, &htab);
 }
 
 void hdestroy(void)
 {
-	__hdestroy_r(&htab);
+	hdestroy_r(&htab);
 }
 
 static struct elem *lookup(char *key, size_t hash, struct hsearch_data *htab)
@@ -126,11 +126,11 @@ ENTRY *hsearch(ENTRY item, ACTION action)
 {
 	ENTRY *e;
 
-	__hsearch_r(item, action, &e, &htab);
+	hsearch_r(item, action, &e, &htab);
 	return e;
 }
 
-int __hcreate_r(size_t nel, struct hsearch_data *htab)
+int hcreate_r(size_t nel, struct hsearch_data *htab)
 {
 	int r;
 
@@ -144,17 +144,15 @@ int __hcreate_r(size_t nel, struct hsearch_data *htab)
 	}
 	return r;
 }
-weak_alias(__hcreate_r, hcreate_r);
 
-void __hdestroy_r(struct hsearch_data *htab)
+void hdestroy_r(struct hsearch_data *htab)
 {
 	if (htab->__tab) free(htab->__tab->elems);
 	free(htab->__tab);
 	htab->__tab = 0;
 }
-weak_alias(__hdestroy_r, hdestroy_r);
 
-int __hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *htab)
+int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *htab)
 {
 	size_t hash = keyhash(item.key);
 	struct elem *e = lookup(item.key, hash, htab);
@@ -181,4 +179,3 @@ int __hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *
 	*retval = &e->item;
 	return 1;
 }
-weak_alias(__hsearch_r, hsearch_r);
