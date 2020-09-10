@@ -13,7 +13,7 @@ void hdestroy(void);
 ENTRY *hsearch(ENTRY, ACTION);
 
 struct hsearch_data {
-	struct __tab *__tab;
+	struct tab *tab;
 	unsigned int __unused1;
 	unsigned int __unused2;
 };
