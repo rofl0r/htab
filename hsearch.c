@@ -32,8 +32,6 @@ open addressing hash table with 2^n table size
 quadratic probing is used in case of hash collision
 tab indices and hash are size_t
 after resize fails with ENOMEM the state of tab is still usable
-
-with the posix api items cannot be iterated and length cannot be queried
 */
 
 typedef struct htab_entry {
