@@ -173,14 +173,14 @@ int htab_insert(struct htab *htab, char* key, htab_value value)
 	return 1;
 }
 
-size_t htab_next(struct htab *htab, size_t iterator, char** key, htab_value *v)
+size_t htab_next(struct htab *htab, size_t iterator, char** key, htab_value **v)
 {
 	size_t i;
 	for(i=iterator;i<htab->mask+1;++i) {
 		struct elem *e = htab->elems + i;
 		if(e->item.key) {
 			*key = e->item.key;
-			*v = e->item.data;
+			*v = &e->item.data;
 			return i+1;
 		}
 	}

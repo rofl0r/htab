@@ -18,9 +18,9 @@ int main() {
 
 	size_t i = 0;
 	char *k;
-	htab_value v;
+	htab_value *v;
 	while(i=htab_next(h, i, &k, &v)) {
-		printf("XXXX shouldnt happen %s -> %zu\n", k, v.n);
+		printf("XXXX shouldnt happen %s -> %zu\n", k, v->n);
 	}
 
 	htab_insert(h, "foo", HTV_N(42));
@@ -30,8 +30,8 @@ int main() {
 	htab_insert(h, "900", HTV_N(900));
 	htab_insert(h, "112", HTV_N(112));
 
-	htab_value* p = htab_find(h, "bar");
-	printf("%zu\n", p->n);
+	v= htab_find(h, "bar");
+	printf("%zu\n", v->n);
 
 	assert(0 != htab_find(h, "baz"));
 	htab_delete(h, "baz");
@@ -39,8 +39,12 @@ int main() {
 
 	i = 0;
 	while(i=htab_next(h, i, &k, &v)) {
-		printf("%s -> %zu\n", k, v.n);
+		printf("%s -> %zu\n", k, v->n);
+		/* change value of stored item */
+		if(!strcmp(k, "112")) v->n++;
 	}
+	v = htab_find(h, "112");
+	assert(v && v->n == 113);
 
 	htab_destroy(h);
 
@@ -67,8 +71,8 @@ int main() {
 	for(i=0;i<N_TESTS;i++) {
 		char buf[32];
 		snprintf(buf, sizeof buf, "mystring-%zu", i);
-		p = htab_find(h, buf);
-		assert(p && p->n == i);
+		v = htab_find(h, buf);
+		assert(v && v->n == i);
 	}
 	while(i=htab_next(h, i, &k, &v)) {
 		free(k);
