@@ -36,6 +36,22 @@ after resize fails with ENOMEM the state of tab is still usable
 with the posix api items cannot be iterated and length cannot be queried
 */
 
+typedef struct htab_entry {
+	char *key;
+	htab_value data;
+} htab_entry;
+
+struct elem {
+	htab_entry item;
+	size_t hash;
+};
+
+struct htab {
+	struct elem *elems;
+	size_t mask;
+	size_t used;
+};
+
 #define MINSIZE 8
 #define MAXSIZE ((size_t)-1/2 + 1)
 
