@@ -122,18 +122,17 @@ htab_value* htab_find(struct htab *htab, char* key)
 	return 0;
 }
 
-htab_entry * htab_search(struct htab *htab, htab_entry item, ACTION action)
+int htab_insert(struct htab *htab, char* key, htab_value value)
 {
-	size_t hash = keyhash(item.key);
-	struct elem *e = lookup(htab, item.key, hash);
-
-	if (e->item.key) {
-		return &e->item;
-	}
-	if (action == FIND) {
+	size_t hash = keyhash(key);
+	struct elem *e = lookup(htab, key, hash);
+	if(e->item.key) {
+		/* it's not allowed to overwrite existing data */
 		return 0;
 	}
-	e->item = item;
+
+	e->item.key = key;
+	e->item.data = value;
 	e->hash = hash;
 	if (++htab->used > htab->mask - htab->mask/4) {
 		if (!resize(htab, 2*htab->used)) {
@@ -141,7 +140,6 @@ htab_entry * htab_search(struct htab *htab, htab_entry item, ACTION action)
 			e->item.key = 0;
 			return 0;
 		}
-		e = lookup(htab, item.key, hash);
 	}
-	return &e->item;
+	return 1;
 }

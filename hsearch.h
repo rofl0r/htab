@@ -3,8 +3,6 @@
 
 #include <stdlib.h>
 
-typedef enum { FIND, ENTER } ACTION;
-
 typedef union htab_value {
 	void *p;
 	size_t n;
@@ -29,6 +27,6 @@ struct htab {
 struct htab * htab_create(size_t);
 void htab_hdestroy(struct htab *);
 htab_value* htab_find(struct htab *, char* key);
-htab_entry* htab_hsearch(struct htab *, htab_entry, ACTION);
+int htab_insert(struct htab *, char*, htab_value);
 
 #endif
