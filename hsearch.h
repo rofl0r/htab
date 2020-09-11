@@ -9,7 +9,7 @@ typedef union htab_value {
 } htab_value;
 
 struct htab * htab_create(size_t);
-void htab_hdestroy(struct htab *);
+void htab_destroy(struct htab *);
 htab_value* htab_find(struct htab *, char* key);
 int htab_insert(struct htab *, char*, htab_value);
 
