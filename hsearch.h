@@ -8,6 +8,9 @@ typedef union htab_value {
 	size_t n;
 } htab_value;
 
+#define HTV_N(N) (htab_value) {.n = N}
+#define HTV_P(P) (htab_value) {.p = P}
+
 struct htab * htab_create(size_t);
 void htab_destroy(struct htab *);
 htab_value* htab_find(struct htab *, char* key);
