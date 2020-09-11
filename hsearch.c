@@ -145,6 +145,14 @@ htab_value* htab_find(struct htab *htab, char* key)
 	return 0;
 }
 
+int htab_delete(struct htab *htab, char* key)
+{
+	htab_entry *i = htab_find_item(htab, key);
+	if(!i) return 0;
+	i->key = 0;
+	return 1;
+}
+
 int htab_insert(struct htab *htab, char* key, htab_value value)
 {
 	size_t hash = keyhash(key);
