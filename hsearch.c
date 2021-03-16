@@ -70,6 +70,9 @@ static int resize(struct htab *htab, size_t nel)
 	struct elem *e, *newe;
 	struct elem *oldtab = htab->elems;
 	struct elem *oldend = htab->elems + htab->mask + 1;
+#ifdef HTAB_OOM_TEST
+	if(oldtab) return 0;
+#endif
 
 	if (nel > MAXSIZE)
 		nel = MAXSIZE;
