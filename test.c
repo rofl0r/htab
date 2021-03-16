@@ -15,6 +15,7 @@ static void maybe_put_mark (int n_ops) {
 
 int main() {
 	struct htab *h = htab_create(16);
+	assert(h);
 
 	size_t i = 0;
 	char *k;
@@ -23,18 +24,19 @@ int main() {
 		printf("XXXX shouldnt happen %s -> %zu\n", k, v->n);
 	}
 
-	htab_insert(h, "foo", HTV_N(42));
-	htab_insert(h, "bar", HTV_N(31337));
-	htab_insert(h, "baz", HTV_P("a string"));
-	htab_insert(h, "qux", HTV_N(64));
-	htab_insert(h, "900", HTV_N(900));
-	htab_insert(h, "112", HTV_N(112));
+	assert(htab_insert(h, "foo", HTV_N(42)));
+	assert(htab_insert(h, "bar", HTV_N(31337)));
+	assert(htab_insert(h, "baz", HTV_P("a string")));
+	assert(htab_insert(h, "qux", HTV_N(64)));
+	assert(htab_insert(h, "900", HTV_N(900)));
+	assert(htab_insert(h, "112", HTV_N(112)));
 
 	v= htab_find(h, "bar");
+	assert(v);
 	printf("%zu\n", v->n);
 
 	assert(0 != htab_find(h, "baz"));
-	htab_delete(h, "baz");
+	assert(0 != htab_delete(h, "baz"));
 	assert(0 == htab_find(h, "baz"));
 
 	i = 0;
@@ -56,11 +58,12 @@ int main() {
 #define STRDUP(X) strdup(X)
 #endif
 
-	h = htab_create(N_TESTS/5);
+	h = htab_create(N_TESTS*1.3);
+	assert(h);
 	for(i=0;i<N_TESTS;i++) {
 		char buf[32];
 		snprintf(buf, sizeof buf, "mystring-%zu", i);
-		htab_insert(h, STRDUP(buf), HTV_N(i));
+		assert(htab_insert(h, STRDUP(buf), HTV_N(i)));
 		maybe_put_mark(i);
 	}
 	puts("");
