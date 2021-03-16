@@ -48,6 +48,7 @@ struct htab {
 	struct elem *elems;
 	size_t mask;
 	size_t used;
+	size_t dead;
 };
 
 #define MINSIZE 8
@@ -161,27 +162,34 @@ int htab_delete(struct htab *htab, char* key)
 	e->item.key = 0;
 	e->hash = 0xdeadc0de;
 	--htab->used;
+	++htab->dead;
 	return 1;
 }
 
 int htab_insert(struct htab *htab, char* key, htab_value value)
 {
-	size_t hash = keyhash(key);
+	size_t hash = keyhash(key), oh;
 	struct elem *e = lookup(htab, key, hash, 0xdeadc0de);
 	if(e->item.key) {
 		/* it's not allowed to overwrite existing data */
 		return 0;
 	}
 
+	oh = e->hash; /* save old hash in case it's tombstone marker */
 	e->item.key = key;
 	e->item.data = value;
 	e->hash = hash;
-	if (++htab->used > htab->mask - htab->mask/4) {
+	if (++htab->used + htab->dead > htab->mask - htab->mask/4) {
 		if (!resize(htab, 2*htab->used)) {
 			htab->used--;
 			e->item.key = 0;
+			e->hash = oh;
 			return 0;
 		}
+		htab->dead = 0;
+	} else if (oh == 0xdeadc0de) {
+		/* re-used tomb */
+		--htab->dead;
 	}
 	return 1;
 }
