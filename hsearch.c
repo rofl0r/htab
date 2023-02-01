@@ -66,11 +66,11 @@ static size_t keyhash(char *k)
 
 static int resize(struct htab *htab, size_t nel)
 {
-	size_t newsize;
+	size_t newsize, oldmask;
 	size_t i, j;
 	struct elem *e, *newe;
 	struct elem *oldtab = htab->elems;
-	struct elem *oldend = htab->elems + htab->mask + 1;
+	struct elem *oldend;
 #ifdef HTAB_OOM_TEST
 	if(oldtab) return 0;
 #endif
@@ -83,9 +83,12 @@ static int resize(struct htab *htab, size_t nel)
 		htab->elems = oldtab;
 		return 0;
 	}
+	oldmask = htab->mask;
 	htab->mask = newsize - 1;
 	if (!oldtab)
 		return 1;
+
+	oldend = oldtab + oldmask + 1;
 	for (e = oldtab; e < oldend; e++)
 		if (e->item.key) {
 			for (i=e->hash,j=1; ; i+=j++) {
